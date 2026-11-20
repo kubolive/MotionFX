@@ -21,6 +21,16 @@ if(LIBOBS_INCLUDE_DIRS)
     include_directories(${LIBOBS_INCLUDE_DIRS})
 endif()
 
+# On macOS, include Homebrew paths for simde
+if(APPLE)
+    if(EXISTS "/opt/homebrew/include")
+        include_directories("/opt/homebrew/include")
+    endif()
+    if(EXISTS "/usr/local/include")
+        include_directories("/usr/local/include")
+    endif()
+endif()
+
 # Core engine sources
 set(MOTIONFX_SOURCES
     src/motionfx_easing.cpp

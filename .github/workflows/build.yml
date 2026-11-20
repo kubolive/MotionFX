@@ -27,6 +27,14 @@ jobs:
       - name: Checkout MotionFX
         uses: actions/checkout@v4
 
+      - name: Checkout OBS headers (shallow sparse)
+        shell: bash
+        run: |
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/obsproject/obs-studio.git obs-repo
+          cd obs-repo
+          git sparse-checkout set libobs
+          cp ../include/obsconfig.h libobs/obsconfig.h 2>/dev/null || true
+
       - name: Setup MSYS2 MinGW-w64 C++20
         uses: msys2/setup-msys2@v2
         with:
@@ -35,14 +43,6 @@ jobs:
           install: >-
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-binutils
-
-      - name: Checkout OBS headers (shallow sparse)
-        shell: msys2 {0}
-        run: |
-          git clone --depth 1 --filter=blob:none --sparse https://github.com/obsproject/obs-studio.git obs-repo
-          cd obs-repo
-          git sparse-checkout set libobs
-          cp ../include/obsconfig.h libobs/obsconfig.h 2>/dev/null || true
 
       - name: Generate libobs import library
         shell: msys2 {0}
@@ -146,6 +146,10 @@ jobs:
     steps:
       - name: Checkout MotionFX
         uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          brew install simde
 
       - name: Checkout OBS headers (shallow sparse)
         run: |
