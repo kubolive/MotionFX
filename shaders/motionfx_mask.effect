@@ -1,0 +1,66 @@
+// MotionFX Mask Reveal Shader for OBS Studio
+
+uniform float4x4 ViewProj;
+uniform texture2d image;
+uniform int mask_type;       // 0=None, 1=Linear, 2=Radial, 3=Box
+uniform float mask_progress; // 0.0 to 1.0
+uniform float mask_angle;    // Degrees
+uniform float mask_feather;  // Edge softness
+uniform float2 mask_center;  // Normalized center
+
+sampler_state def_sampler {
+    Filter    = Linear;
+    AddressU  = Clamp;
+    AddressV  = Clamp;
+};
+
+struct VertInOut {
+    float4 pos : POSITION;
+    float2 uv  : TEXCOORD0;
+};
+
+VertInOut VSDefault(VertInOut vert_in)
+{
+    VertInOut vert_out;
+    vert_out.pos = mul(ViewProj, vert_in.pos);
+    vert_out.uv  = vert_in.uv;
+    return vert_out;
+}
+
+float4 PSMaskReveal(VertInOut vert_in) : TARGET
+{
+    float4 col = image.Sample(def_sampler, vert_in.uv);
+    if (mask_type == 0) return col;
+
+    float alpha_factor = 1.0;
+    float feather = max(0.001, mask_feather);
+
+    if (mask_type == 1) { // Linear wipe
+        float rad = radians(mask_angle);
+        float2 dir = float2(cos(rad), sin(rad));
+        float proj = dot(vert_in.uv - float2(0.5, 0.5), dir);
+        float norm_proj = (proj / 1.4142) + 0.5;
+        alpha_factor = smoothstep(norm_proj - feather, norm_proj + feather, mask_progress);
+    }
+    else if (mask_type == 2) { // Radial circle
+        float dist = distance(vert_in.uv, mask_center) / 0.7071;
+        alpha_factor = 1.0 - smoothstep(mask_progress - feather, mask_progress, dist);
+    }
+    else if (mask_type == 3) { // Box wipe
+        float2 d = abs(vert_in.uv - mask_center) / 0.5;
+        float max_d = max(d.x, d.y);
+        alpha_factor = 1.0 - smoothstep(mask_progress - feather, mask_progress, max_d);
+    }
+
+    col.a *= saturate(alpha_factor);
+    return col;
+}
+
+technique Draw
+{
+    pass
+    {
+        vertex_shader = VSDefault(vert_in);
+        pixel_shader  = PSMaskReveal(vert_in);
+    }
+}

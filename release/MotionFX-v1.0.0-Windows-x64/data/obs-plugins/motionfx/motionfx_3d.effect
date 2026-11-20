@@ -1,0 +1,107 @@
+// MotionFX 3D Perspective & Motion Effects Shader for OBS Studio
+// HLSL / libobs GS effect syntax
+
+uniform float4x4 ViewProj;
+uniform texture2d image;
+uniform float opacity;
+uniform float4 color;
+
+// Visual Effects parameters
+uniform float blur_radius;   // 0.0 = sharp, > 0 = Gaussian blur
+uniform int mask_type;       // 0=None, 1=Linear Wipe, 2=Radial, 3=Box, 4=Typewriter, 5=Character Stagger
+uniform float mask_progress; // 0.0 to 1.0
+uniform float mask_angle;    // Degrees
+uniform float mask_feather;  // Edge softness
+
+sampler_state def_sampler {
+    Filter    = Linear;
+    AddressU  = Clamp;
+    AddressV  = Clamp;
+};
+
+struct VertInOut {
+    float4 pos : POSITION;
+    float2 uv  : TEXCOORD0;
+};
+
+VertInOut VSDefault(VertInOut vert_in)
+{
+    VertInOut vert_out;
+    vert_out.pos = mul(float4(vert_in.pos.xyz, 1.0), ViewProj);
+    vert_out.uv  = vert_in.uv;
+    return vert_out;
+}
+
+float4 PSDrawEffects(VertInOut vert_in) : TARGET
+{
+    float4 rgba = float4(0.0, 0.0, 0.0, 0.0);
+
+    // 1. Dual-radius Gaussian blur sampling if blur_radius > 0
+    if (blur_radius > 0.05) {
+        float2 px = float2(0.0015, 0.0015) * blur_radius;
+        rgba += image.Sample(def_sampler, vert_in.uv + float2(-px.x, -px.y)) * 0.0625;
+        rgba += image.Sample(def_sampler, vert_in.uv + float2(0.0,   -px.y)) * 0.125;
+        rgba += image.Sample(def_sampler, vert_in.uv + float2(px.x,  -px.y)) * 0.0625;
+        rgba += image.Sample(def_sampler, vert_in.uv + float2(-px.x,  0.0))  * 0.125;
+        rgba += image.Sample(def_sampler, vert_in.uv)                         * 0.25;
+        rgba += image.Sample(def_sampler, vert_in.uv + float2(px.x,   0.0))  * 0.125;
+        rgba += image.Sample(def_sampler, vert_in.uv + float2(-px.x,  px.y)) * 0.0625;
+        rgba += image.Sample(def_sampler, vert_in.uv + float2(0.0,    px.y)) * 0.125;
+        rgba += image.Sample(def_sampler, vert_in.uv + float2(px.x,   px.y)) * 0.0625;
+    } else {
+        rgba = image.Sample(def_sampler, vert_in.uv);
+    }
+
+    // 2. Mask Reveal and Typewriter Wipe
+    if (mask_type > 0) {
+        float alpha_factor = 1.0;
+        float feather = clamp(mask_feather, 0.005, 0.25);
+        float p = mask_progress * (1.0 + 2.0 * feather) - feather;
+
+        if (mask_type == 1) { // Linear diagonal wipe
+            float rad = mask_angle * 0.0174532925f;
+            float2 dir = float2(cos(rad), sin(rad));
+            float proj = dot(vert_in.uv - float2(0.5, 0.5), dir);
+            float norm_proj = (proj / 1.41421356f) + 0.5;
+            alpha_factor = smoothstep(norm_proj - feather, norm_proj + feather, p);
+        }
+        else if (mask_type == 2) { // Radial circle
+            float dist = distance(vert_in.uv, float2(0.5, 0.5)) * 1.41421356f;
+            alpha_factor = 1.0 - smoothstep(p - feather, p + feather, dist);
+        }
+        else if (mask_type == 3) { // Box wipe
+            float2 d = abs(vert_in.uv - float2(0.5, 0.5)) * 2.0;
+            float max_d = max(d.x, d.y);
+            alpha_factor = 1.0 - smoothstep(p - feather, p + feather, max_d);
+        }
+        else if (mask_type == 4) { // Typewriter Reveal (Left-to-Right wipe along UV X)
+            alpha_factor = smoothstep(vert_in.uv.x - feather, vert_in.uv.x + feather, p);
+        }
+        else if (mask_type == 5) { // Stepped Character Stagger
+            float steps = 24.0;
+            float stepped_p = floor(mask_progress * (steps + 1.0)) / steps;
+            alpha_factor = (vert_in.uv.x <= stepped_p) ? 1.0 : 0.0;
+        }
+
+        // Must scale both RGB and A for premultiplied alpha blend (GS_BLEND_ONE, GS_BLEND_INVSRCALPHA)
+        float sat_alpha = saturate(alpha_factor);
+        rgba.rgb *= sat_alpha;
+        rgba.a *= sat_alpha;
+    }
+
+    // 3. Overall opacity and tint (premultiplied)
+    float sat_opacity = saturate(opacity);
+    rgba.rgb *= sat_opacity;
+    rgba.a *= sat_opacity;
+
+    return rgba * color;
+}
+
+technique Draw
+{
+    pass
+    {
+        vertex_shader = VSDefault(vert_in);
+        pixel_shader  = PSDrawEffects(vert_in);
+    }
+}

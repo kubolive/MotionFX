@@ -1,0 +1,8 @@
+setup.py
+motionfx/__init__.py
+motionfx/client.py
+motionfx/models.py
+motionfx.egg-info/PKG-INFO
+motionfx.egg-info/SOURCES.txt
+motionfx.egg-info/dependency_links.txt
+motionfx.egg-info/top_level.txt

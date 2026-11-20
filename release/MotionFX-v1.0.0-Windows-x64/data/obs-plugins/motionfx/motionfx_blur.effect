@@ -1,0 +1,47 @@
+// MotionFX Dual-Pass & Motion Blur Shader for OBS Studio
+
+uniform float4x4 ViewProj;
+uniform texture2d image;
+uniform float2 blur_dir;     // (1/w, 0) for horizontal, (0, 1/h) for vertical, or (dx, dy) for motion blur
+uniform float blur_radius;
+uniform int tap_count;
+uniform float weights[32];
+uniform float offsets[32];
+
+sampler_state def_sampler {
+    Filter    = Linear;
+    AddressU  = Clamp;
+    AddressV  = Clamp;
+};
+
+struct VertInOut {
+    float4 pos : POSITION;
+    float2 uv  : TEXCOORD0;
+};
+
+VertInOut VSDefault(VertInOut vert_in)
+{
+    VertInOut vert_out;
+    vert_out.pos = mul(ViewProj, vert_in.pos);
+    vert_out.uv  = vert_in.uv;
+    return vert_out;
+}
+
+float4 PSGaussianBlur(VertInOut vert_in) : TARGET
+{
+    float4 col = float4(0.0, 0.0, 0.0, 0.0);
+    for (int i = 0; i < tap_count; ++i) {
+        float2 sample_uv = vert_in.uv + blur_dir * offsets[i];
+        col += image.Sample(def_sampler, sample_uv) * weights[i];
+    }
+    return col;
+}
+
+technique BlurPass
+{
+    pass
+    {
+        vertex_shader = VSDefault(vert_in);
+        pixel_shader  = PSGaussianBlur(vert_in);
+    }
+}

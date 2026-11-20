@@ -1,0 +1,30 @@
+# Build and binaries
+build/
+bin/
+w64devkit/
+obs-repo/
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.def
+
+# Intermediate object files
+*.o
+*.obj
+
+# Python
+__pycache__/
+*.pyc
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs & temp
+*.log
+scratch/
