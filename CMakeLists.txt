@@ -9,12 +9,12 @@ include_directories(include)
 
 # Find or specify libobs headers
 set(LIBOBS_INCLUDE_DIRS "")
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/obs-repo/libobs/obs.h")
-    set(LIBOBS_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/obs-repo/libobs")
-elseif(EXISTS "/usr/include/obs/obs.h")
+if(EXISTS "/usr/include/obs/obs.h")
     set(LIBOBS_INCLUDE_DIRS "/usr/include/obs")
 elseif(EXISTS "/usr/local/include/obs/obs.h")
     set(LIBOBS_INCLUDE_DIRS "/usr/local/include/obs")
+elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/obs-repo/libobs/obs.h")
+    set(LIBOBS_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/obs-repo/libobs")
 endif()
 
 if(LIBOBS_INCLUDE_DIRS)
