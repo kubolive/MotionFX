@@ -9,7 +9,9 @@ obs-repo/
 *.dylib
 *.a
 *.lib
+# Def files (except cmake/obs.def)
 *.def
+!cmake/obs.def
 
 # Intermediate object files
 *.o

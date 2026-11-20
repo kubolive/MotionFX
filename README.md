@@ -4,7 +4,8 @@
 
 [![OBS Studio](https://img.shields.io/badge/OBS%20Studio-31.1%2B-blue.svg)](https://obsproject.com/)
 [![License](https://img.shields.io/badge/License-GPLv2-green.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20x64-brightgreen.svg)]()
+[![Build Multi-Platform](https://github.com/kubolive/MotionFX/actions/workflows/build.yml/badge.svg)](https://github.com/kubolive/MotionFX/actions/workflows/build.yml)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-brightgreen.svg)]()
 
 **MotionFX** is a high-performance native OBS Studio plugin (`OBS_SOURCE_TYPE_TRANSITION`) that brings professional broadcast-grade motion graphics and animation transitions directly to individual **Scene Items**.
 
@@ -53,21 +54,39 @@ Unlike standard OBS scene transitions that only switch between whole scenes, Mot
 
 ## 📦 Installation
 
-1. Download the latest `MotionFX-v1.0.0-Windows-x64.zip` from the [Releases](https://github.com/kubolive/MotionFX/releases) page.
-2. Extract the archive into your OBS Studio installation folder (default: `C:\Program Files\obs-studio\`):
-   ```text
-   C:\Program Files\obs-studio\
-   ├── obs-plugins\64bit\motionfx.dll
-   └── data\obs-plugins\motionfx\
-       ├── motionfx_3d.effect
-       ├── motionfx_blur.effect
-       ├── motionfx_mask.effect
-       └── locale\
-           ├── en-US.ini
-           └── vi-VN.ini
-   ```
-3. Restart OBS Studio.
-4. Right-click any source in your scene -> **Show Transition** or **Hide Transition** -> Select **MotionFX Transition**.
+Download the latest releases from the [Releases](https://github.com/kubolive/MotionFX/releases) page:
+
+### 🪟 Windows (x64)
+- **Automatic Installer (`.exe`):**
+  Download `MotionFX-v1.0.0-Windows-Installer.exe` and run the wizard. It automatically locates your OBS Studio installation and copies all necessary files.
+- **Manual Portable (`.zip`):**
+  Extract `MotionFX-v1.0.0-Windows-x64.zip` into your OBS Studio root directory (e.g. `C:\Program Files\obs-studio\`):
+  ```text
+  C:\Program Files\obs-studio\
+  ├── obs-plugins\64bit\motionfx.dll
+  └── data\obs-plugins\motionfx\
+      ├── motionfx_3d.effect
+      └── locale\
+          ├── en-US.ini
+          └── vi-VN.ini
+  ```
+
+### 🐧 Linux (Ubuntu / Debian / x64)
+- **Debian Package (`.deb`):**
+  ```bash
+  sudo dpkg -i MotionFX-v1.0.0-Linux-x64.deb
+  # Or via apt:
+  sudo apt-get install -f
+  ```
+- **Portable Tarball (`.tar.gz` / `.zip`):**
+  Extract into `~/.config/obs-studio/plugins/motionfx/` or `/usr/lib/obs-plugins/`.
+
+### 🍎 macOS (Apple Silicon M-Series & Intel)
+- **Native Package Installer (`.pkg`):**
+  Double click `MotionFX-v1.0.0-macOS.pkg` and follow the installer. It installs `motionfx.plugin` into `/Library/Application Support/obs-studio/plugins`.
+- **Manual Bundle (`.zip`):**
+  Extract `MotionFX-v1.0.0-macOS.zip` and copy `motionfx.plugin` into:
+  `~/Library/Application Support/obs-studio/plugins/` (or `/Library/Application Support/obs-studio/plugins/`).
 
 ---
 
