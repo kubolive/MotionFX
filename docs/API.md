@@ -1,11 +1,11 @@
-# MotionFX Developer API & Automation Guide 🚀
+# MotionFX Developer API & Automation Guide
 
 > **Official Automation & Developer Documentation for MotionFX OBS Studio Plugin**  
 > Covers **OBS-WebSocket v5**, **Python (`obspython`)**, **Lua (`obslua`)**, and **Stream Deck / Touch Portal** integrations.
 
 ---
 
-## 📑 Table of Contents
+## Table of Contents
 1. [Architecture Overview](#1-architecture-overview)
 2. [Supported Animation Presets & Parameters](#2-supported-animation-presets--parameters)
 3. [Method 1: OBS-WebSocket v5 (Remote Automation)](#3-method-1-obs-websocket-v5-remote-automation)
@@ -25,13 +25,13 @@ When a Scene Item transitions:
 - **Hide Transition:** Fires when the item is hidden (`visible = false`). MotionFX mathematically evaluates the **reverse timeline** ($1.0 \to 0.0$), carrying the source smoothly back to its hidden state.
 
 Because MotionFX hooks directly into the native Scene Item visibility lifecycle:
-- Any WebSocket call (`SetSceneItemEnabled`), Python/Lua call (`obs_sceneitem_set_visible`), Hotkey press, or Stream Deck button press automatically triggers the high-performance MotionFX animation!
+- Any WebSocket call (`SetSceneItemEnabled`), Python/Lua call (`obs_sceneitem_set_visible`), Hotkey press, or Stream Deck button press automatically triggers the MotionFX animation.
 
 ---
 
 ## 2. Supported Animation Presets & Parameters
 
-### 🎭 Built-in Preset IDs
+### Built-in Preset IDs
 Use these string identifiers in WebSocket requests, Python, and Lua:
 
 | Preset ID | Display Name | Visual Style |
@@ -55,14 +55,14 @@ Use these string identifiers in WebSocket requests, Python, and Lua:
 | `smooth_slide_down` | Smooth Slide Down | Vertical slide from offscreen bottom |
 | `cinematic_fly_through`| 3D Fly-Through | Dramatic 3D Z-depth camera fly-in |
 
-### 📐 Transform Anchors (Pivots)
+### Transform Anchors (Pivots)
 - `"center"`: Rotates/scales around the item center point.
 - `"top"`: Folds from the top edge.
 - `"bottom"`: Folds from the bottom edge.
 - `"left"`: Opens like a door from the left edge.
 - `"right"`: Opens from the right edge.
 
-### ⏱️ Easing Curves
+### Easing Curves
 `"ease_out"`, `"ease_in"`, `"ease_in_out"`, `"back_out"` (overshoot), `"elastic_out"` (spring), `"bounce_out"` (physical bounce), `"linear"`.
 
 ---
@@ -107,7 +107,7 @@ To trigger MotionFX on any Scene Item, simply toggle the item's visibility using
 ```
 
 ### B. Python Standalone Client Example
-Run the bundled [`scripts/obs_websocket_client.py`](file:///c:/Users/Dell/Desktop/advanced%20transition/scripts/obs_websocket_client.py):
+Run the bundled `scripts/obs_websocket_client.py`:
 ```bash
 # Toggle item visibility
 python scripts/obs_websocket_client.py "Gaming Scene" "Webcam" toggle
@@ -120,7 +120,7 @@ python scripts/obs_websocket_client.py "Gaming Scene" "AlertBox" hide "myObsPass
 ```
 
 ### C. Node.js / JavaScript Client Example
-Use the bundled [`scripts/obs_websocket_client.js`](file:///c:/Users/Dell/Desktop/advanced%20transition/scripts/obs_websocket_client.js):
+Use the bundled `scripts/obs_websocket_client.js`:
 ```javascript
 const MotionFXClient = require('./scripts/obs_websocket_client.js');
 
@@ -147,10 +147,10 @@ run();
 ### A. Using the Built-in Controller GUI
 1. Open OBS Studio.
 2. Go to **Tools -> Scripts**.
-3. Under the **Python Scripts** tab, click **(+)** and select [`scripts/motionfx_controller.py`](file:///c:/Users/Dell/Desktop/advanced%20transition/scripts/motionfx_controller.py).
+3. Under the **Python Scripts** tab, click **(+)** and select `scripts/motionfx_controller.py`.
 4. Select your **Target Scene**, **Target Source**, **Preset**, and **Duration**.
-5. Click **✨ Apply MotionFX to Scene Item**!
-6. Click **▶️ Play SHOW** or **◀️ Play HIDE** to test instantly.
+5. Click **Apply MotionFX to Scene Item**.
+6. Click **Play SHOW** or **Play HIDE** to test instantly.
 
 ### B. Calling MotionFX in Custom Python Scripts
 ```python
@@ -196,12 +196,12 @@ def trigger_animation(scene_name, item_name, show=True):
 
 ## 5. Method 3: OBS Lua Scripting (`obslua`)
 
-Lua is built directly into all OBS Studio installations with **zero setup** (no python interpreter configuration needed).
+Lua is built directly into all OBS Studio installations with zero setup.
 
 ### A. Using the Built-in Lua Controller
 1. In OBS Studio, open **Tools -> Scripts**.
-2. Click **(+)** and add [`scripts/motionfx_controller.lua`](file:///c:/Users/Dell/Desktop/advanced%20transition/scripts/motionfx_controller.lua).
-3. The interactive controller UI is immediately available!
+2. Click **(+)** and add `scripts/motionfx_controller.lua`.
+3. The interactive controller UI is immediately available.
 
 ### B. Custom Lua Automation
 ```lua
@@ -253,10 +253,10 @@ end
    - `MotionFX: Hide Item (Animate Out)`
    - `MotionFX: Toggle Item Visibility`
 4. Assign hotkey combinations (e.g. `F13`, `Ctrl+Shift+1`).
-5. In **Elgato Stream Deck** or **Touch Portal**, map a button to that Hotkey!
+5. In **Elgato Stream Deck** or **Touch Portal**, map a button to that Hotkey.
 
 ### Option B: Via Native OBS Studio Action in Stream Deck
 In Stream Deck:
 1. Drag **OBS Studio -> Source Visibility** onto a key.
 2. Select your Scene and Source.
-3. Because MotionFX is registered as the item's Show and Hide transition, pressing the Stream Deck button triggers the full 3D animation smoothly!
+3. Because MotionFX is registered as the item's Show and Hide transition, pressing the Stream Deck button triggers the animation smoothly.

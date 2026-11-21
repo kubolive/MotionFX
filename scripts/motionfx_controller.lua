@@ -178,7 +178,7 @@ end
 -- ============================================================================
 
 function script_description()
-    return [[<h2>🎬 MotionFX Controller API</h2>
+    return [[<h2>MotionFX Controller API</h2>
 <p>Easily bind, automate, and trigger <b>MotionFX 3D & Motion Transitions</b> on any Scene Item.</p>
 <ul>
     <li><b>Attach MotionFX:</b> Automatically registers Show/Hide transitions on selected item.</li>
@@ -238,22 +238,22 @@ function script_properties()
     obs.obs_property_list_add_string(p_target, "Hide Transition Only", "hide")
 
     -- 6. Action Buttons
-    obs.obs_properties_add_button(props, "btn_apply", "✨ Apply MotionFX to Scene Item", function()
+    obs.obs_properties_add_button(props, "btn_apply", "Apply MotionFX to Scene Item", function()
         apply_motionfx_to_item(current_scene_name, current_item_name, current_preset, current_duration_ms, current_target_mode)
         return true
     end)
 
-    obs.obs_properties_add_button(props, "btn_show", "▶️ Play SHOW Animation", function()
+    obs.obs_properties_add_button(props, "btn_show", "Play SHOW Animation", function()
         trigger_show()
         return true
     end)
 
-    obs.obs_properties_add_button(props, "btn_hide", "◀️ Play HIDE Animation", function()
+    obs.obs_properties_add_button(props, "btn_hide", "Play HIDE Animation", function()
         trigger_hide()
         return true
     end)
 
-    obs.obs_properties_add_button(props, "btn_toggle", "🔄 Toggle Visibility", function()
+    obs.obs_properties_add_button(props, "btn_toggle", "Toggle Visibility", function()
         trigger_toggle()
         return true
     end)
