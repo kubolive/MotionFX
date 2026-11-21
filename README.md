@@ -90,6 +90,23 @@ Download the latest releases from the [Releases](https://github.com/kubolive/Mot
 
 ---
 
+## 🔌 Automation & Developer API (WebSocket, Python, Lua, Stream Deck)
+
+MotionFX provides complete programmatic control for external bots, scripts, and macro controllers:
+
+- 📖 **Full English API Guide:** [docs/API.md](docs/API.md)
+- 📖 **Tài liệu tiếng Việt:** [docs/API_VI.md](docs/API_VI.md)
+
+### ⚡ Quick Start:
+- **OBS-WebSocket v5:** Trigger 3D show/hide animations with standard `SetSceneItemEnabled` requests. Ready-to-run clients included:
+  - Python: [`scripts/obs_websocket_client.py`](scripts/obs_websocket_client.py)
+  - Node.js / JavaScript: [`scripts/obs_websocket_client.js`](scripts/obs_websocket_client.js)
+- **OBS Lua Script:** Add [`scripts/motionfx_controller.lua`](scripts/motionfx_controller.lua) into OBS Studio (`Tools -> Scripts`) for a full graphical UI and hotkeys with **zero dependencies**.
+- **OBS Python Script:** Add [`scripts/motionfx_controller.py`](scripts/motionfx_controller.py) into OBS Studio (`Tools -> Scripts`).
+- **Elgato Stream Deck / Touch Portal:** Map native **OBS Studio -> Source Visibility** actions or use the custom MotionFX hotkeys to animate sources on the fly!
+
+---
+
 ## 🛠️ Building from Source
 
 ### Requirements

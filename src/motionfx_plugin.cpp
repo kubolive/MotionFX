@@ -61,6 +61,7 @@ static const char *motionfx_tr_get_name(void *unused)
 static void motionfx_tr_get_defaults(obs_data_t *settings)
 {
     obs_data_set_default_string(settings, "preset", "3d_flip_x");
+    obs_data_set_default_int(settings, "duration", 500);
     obs_data_set_default_string(settings, "transition_mode", "auto");
     obs_data_set_default_string(settings, "anchor_point", "center");
     obs_data_set_default_bool(settings, "custom_override", false);
@@ -106,6 +107,11 @@ static void motionfx_tr_update(void *data, obs_data_t *settings)
     if (preset && strlen(preset) > 0) {
         tr->preset_name = preset;
         motionfx::PresetManager::instance().apply_preset(tr->comp, tr->preset_name);
+    }
+
+    long long dur = obs_data_get_int(settings, "duration");
+    if (dur > 0) {
+        tr->duration_ms = (uint32_t)dur;
     }
 
     const char *mode = obs_data_get_string(settings, "transition_mode");
@@ -304,6 +310,29 @@ static void *motionfx_tr_create(obs_data_t *settings, obs_source_t *source)
 
     // Default configuration: 3D Flip X
     motionfx::PresetManager::instance().apply_preset(tr->comp, "3d_flip_x");
+
+    // Register procedure handlers for scripting / external API
+    proc_handler_t *ph = obs_source_get_proc_handler(source);
+    if (ph) {
+        proc_handler_add(ph, "void set_preset(string preset)", [](void *data, calldata_t *cd) {
+            auto *tr_ptr = static_cast<motionfx_tr_data *>(data);
+            if (!tr_ptr) return;
+            const char *p = nullptr;
+            if (calldata_get_string(cd, "preset", &p) && p) {
+                tr_ptr->preset_name = p;
+                motionfx::PresetManager::instance().apply_preset(tr_ptr->comp, tr_ptr->preset_name);
+            }
+        }, tr);
+
+        proc_handler_add(ph, "void set_duration(int duration_ms)", [](void *data, calldata_t *cd) {
+            auto *tr_ptr = static_cast<motionfx_tr_data *>(data);
+            if (!tr_ptr) return;
+            long long dur_val = 0;
+            if (calldata_get_int(cd, "duration_ms", &dur_val) && dur_val > 0) {
+                tr_ptr->duration_ms = (uint32_t)dur_val;
+            }
+        }, tr);
+    }
 
     obs_source_update(source, settings);
     return tr;
@@ -584,6 +613,9 @@ static obs_properties_t *motionfx_tr_get_properties(void *data)
     obs_property_list_add_string(p_mode, "Auto Detect (Show / Hide)", "auto");
     obs_property_list_add_string(p_mode, "Show (Animate into view)", "show");
     obs_property_list_add_string(p_mode, "Hide (Animate out / Reverse)", "hide");
+
+    // 3. Duration
+    obs_properties_add_int(ppts, "duration", obs_module_text("Duration"), 50, 10000, 50);
 
     // 3. Anchor Point (Pivot)
     obs_property_t *p_anchor = obs_properties_add_list(ppts, "anchor_point", "Transform Anchor (Pivot)",
