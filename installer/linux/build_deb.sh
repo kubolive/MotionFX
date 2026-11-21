@@ -14,7 +14,7 @@ mkdir -p "${PKG_DIR}/usr/share/obs/obs-plugins/motionfx/locale"
 
 # Control file
 cat <<EOF > "${PKG_DIR}/DEBIAN/control"
-Package: obs-motionfx
+Package: motionfx
 Version: ${VERSION}
 Section: video
 Priority: optional
@@ -25,6 +25,8 @@ Depends: libobs0 (>= 28.0) | obs-studio (>= 28.0)
 Description: MotionFX: Advanced Animation & 3D Transitions for OBS Studio
  MotionFX provides high-performance composable scene item show/hide animations,
  including 3D flips, smooth spring dynamics, text reveals, and camera fly-throughs.
+ Disclaimer: MotionFX is an independent third-party open-source project and is
+ not affiliated with, sponsored by, or endorsed by the OBS Project.
 EOF
 
 # Install plugin binary

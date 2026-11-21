@@ -1,5 +1,6 @@
 ; Inno Setup Script for MotionFX OBS Studio Plugin
-#define MyAppName "MotionFX OBS Plugin"
+; Disclaimer: MotionFX is an independent open-source plugin and is not affiliated with, sponsored by, or endorsed by the OBS Project or OBS Studio.
+#define MyAppName "MotionFX for OBS Studio"
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "KuboLive"
 #define MyAppURL "https://github.com/kubolive/MotionFX"

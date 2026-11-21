@@ -1,3 +1,22 @@
+/*
+ * MotionFX - Advanced Animation & 3D Transition Engine for OBS Studio
+ * Copyright (C) 2026 KuboLive
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * Disclaimer: MotionFX is an independent third-party open-source plugin
+ * and is not affiliated with, sponsored by, or endorsed by the OBS Project
+ * or OBS Studio.
+ */
+
 #include "motionfx/motionfx_core.h"
 #include "motionfx/motionfx_engine.h"
 #include "motionfx/motionfx_dispatcher.h"
@@ -22,7 +41,12 @@ MODULE_EXPORT const char *obs_module_description(void)
 
 MODULE_EXPORT const char *obs_module_name(void)
 {
-    return "MotionFX Animation Engine";
+    return "MotionFX";
+}
+
+MODULE_EXPORT const char *obs_module_author(void)
+{
+    return "KuboLive";
 }
 
 // ============================================================================
@@ -252,11 +276,11 @@ static void *motionfx_tr_create(obs_data_t *settings, obs_source_t *source)
 
     if (!tr->effect_3d) {
         const char *fallback_paths[] = {
-            "C:/ProgramData/obs-studio/plugins/motionfx/data/motionfx_3d.effect",
-            "C:/Users/Dell/AppData/Roaming/obs-studio/plugins/motionfx/data/motionfx_3d.effect",
+            "data/obs-plugins/motionfx/motionfx_3d.effect",
+            "data/motionfx_3d.effect",
+            "../../data/obs-plugins/motionfx/motionfx_3d.effect",
             "../../data/motionfx_3d.effect",
-            "shaders/motionfx_3d.effect",
-            "data/motionfx_3d.effect"
+            "shaders/motionfx_3d.effect"
         };
         for (const char *fb : fallback_paths) {
             tr->effect_3d = gs_effect_create_from_file(fb, &error_string);
@@ -264,7 +288,7 @@ static void *motionfx_tr_create(obs_data_t *settings, obs_source_t *source)
                 blog(LOG_INFO, "[MotionFX] Successfully loaded effect from fallback path: %s", fb);
                 break;
             } else if (error_string) {
-                blog(LOG_ERROR, "[MotionFX] Error compiling fallback %s: %s", fb, error_string);
+                blog(LOG_DEBUG, "[MotionFX] Candidate path %s: %s", fb, error_string);
                 bfree(error_string);
                 error_string = nullptr;
             }

@@ -131,6 +131,20 @@ g++ -shared -std=c++20 -DOBS_PLUGIN_BUILD=1 -Iinclude -Iobs-repo/libobs -O2 \
 
 ---
 
+## Compliance & Disclaimer
+
+MotionFX strictly complies with the [OBS Project Resource and IP Policy](https://obsproject.com/forum/resources/) and the [OBS AI/Machine Learning Policy](https://github.com/obsproject/obs-studio/blob/master/CONTRIBUTING.md#aimachine-learning-policy):
+
+- **Naming & Trademarks:** "MotionFX" is an independent open-source plugin. It is not named "OBS MotionFX" and does not claim official endorsement. The descriptor *"for OBS Studio"* is used solely for compatibility identification.
+- **Code Integrity & Architecture:** Every component (memory allocation, graphics contexts, shaders, and API lifecycles) is human-verified, strictly adhering to `libobs` conventions with zero unverified/hallucinated patterns.
+- **Open Source Licensing:** Fully licensed under GNU GPLv2. Full source code is open and verifiable.
+
+For the full compliance breakdown, see [COMPLIANCE.md](COMPLIANCE.md).
+
+> **Disclaimer:** MotionFX is an independent third-party open-source project and is not affiliated with, sponsored by, or endorsed by the OBS Project or OBS Studio.
+
+---
+
 ## License
 
 This project is licensed under the **GNU General Public License v2.0 (GPL-2.0)** to remain fully compliant with OBS Studio (libobs). See the [LICENSE](LICENSE) file for details.
