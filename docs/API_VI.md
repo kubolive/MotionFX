@@ -7,10 +7,11 @@
 ## Muc luc
 1. [Tong quan co che hoat dong](#1-tong-quan-co-che-hoat-dong)
 2. [Bang danh sach Preset & Thong so](#2-bang-danh-sach-preset--thong-so)
-3. [Phuong phap 1: OBS-WebSocket v5 (Dieu khien tu xa)](#3-phuong-phap-1-obs-websocket-v5-dieu-khien-tu-xa)
-4. [Phuong phap 2: Viet Script Python trong OBS (`obspython`)](#4-phuong-phap-2-viet-script-python-trong-obs-obspython)
-5. [Phuong phap 3: Viet Script Lua trong OBS (`obslua`)](#5-phuong-phap-3-viet-script-lua-trong-obs-obslua)
-6. [Phuong phap 4: Tich hop Stream Deck & Touch Portal](#6-phuong-phap-4-tich-hop-stream-deck--touch-portal)
+3. [Tuy bien thong so thu cong (Custom Parameter Overrides)](#3-tuy-bien-thong-so-thu-cong-custom-parameter-overrides)
+4. [Phuong phap 1: OBS-WebSocket v5 (Dieu khien tu xa)](#4-phuong-phap-1-obs-websocket-v5-dieu-khien-tu-xa)
+5. [Phuong phap 2: Viet Script Python trong OBS (`obspython`)](#5-phuong-phap-2-viet-script-python-trong-obs-obspython)
+6. [Phuong phap 3: Viet Script Lua trong OBS (`obslua`)](#6-phuong-phap-3-viet-script-lua-trong-obs-obslua)
+7. [Phuong phap 4: Tich hop Stream Deck & Touch Portal](#7-phuong-phap-4-tich-hop-stream-deck--touch-portal)
 
 ---
 
@@ -65,7 +66,60 @@ Dien dung ID chuoi (string) ben duoi khi goi qua WebSocket hoac Script:
 
 ---
 
-## 3. Phuong phap 1: OBS-WebSocket v5 (Dieu khien tu xa)
+## 3. Tuy bien thong so thu cong (Custom Parameter Overrides)
+
+Ngoai cac preset co san, MotionFX cho phep ban tu do tuy bien va ghep noi bat ky thanh phan animation nao qua co `"custom_override": true`.
+
+### Bang danh sach cac khoa can thiep thu cong
+
+| Khoa cai dat (Key) | Kieu | Mac dinh | Y nghia & Mo ta |
+| :--- | :--- | :--- | :--- |
+| `custom_override` | `bool` | `false` | Bat/tat che do can thiep thong so thu cong. |
+| `duration` | `int` | `500` | Thoi luong animation (mili-giay). |
+| `anchor_point` | `string` | `"center"` | Diem neo: `"center"`, `"top"`, `"bottom"`, `"left"`, `"right"`. |
+| `easing` | `string` | `"ease_out"` | Duong cong toc do (`elastic_out`, `back_out`...). |
+| `enable_3d` | `bool` | `false` | Bat che do lat khong gian 3D Euler. |
+| `rot_x` | `double` | `90.0` | Goc lat ban dau truc doc X (vi du: 45.0, 90.0, 180.0). |
+| `rot_y` | `double` | `0.0` | Goc lat ban dau truc ngang Y (lat the bai). |
+| `enable_rotation`| `bool` | `false` | Bat xoay mat phang 2D Z. |
+| `rot_z` | `double` | `0.0` | Goc xoay 2D ban dau (do). |
+| `enable_slide` | `bool` | `false` | Bat truot vi tri. |
+| `slide_x` | `double` | `0.0` | Do lech bat dau theo truc ngang X (pixel). |
+| `slide_y` | `double` | `0.0` | Do lech bat dau theo truc doc Y (pixel). |
+| `slide_z` | `double` | `0.0` | Do sau trong khong gian 3D Z (pixel). |
+| `enable_scale` | `bool` | `false` | Bat phong to / thu nho (Zoom). |
+| `scale_start` | `double` | `0.0` | Ti le kich thuoc ban dau (0.5 = 50%). |
+| `scale_end` | `double` | `1.0` | Ti le kich thuoc ket thuc. |
+| `enable_fade` | `bool` | `false` | Bat mo duc / trong suot (Opacity). |
+| `fade_start` | `double` | `0.0` | Do trong suot ban dau (0.0 = vo hinh). |
+| `fade_end` | `double` | `1.0` | Do trong suot ket thuc (1.0 = hien ro). |
+| `enable_blur` | `bool` | `false` | Bat lam mo quang hoc Gaussian. |
+| `blur_radius` | `double` | `12.0` | Ban kinh mo (1.0 den 30.0 px). |
+| `enable_mask` | `bool` | `false` | Bat mat na quet reveal (Shader Mask). |
+| `mask_type` | `int` | `1` | `1`: Cheo, `2`: Tron Iris, `3`: Hop Box, `4`: Typewriter, `5`: Stagger. |
+| `mask_angle` | `double` | `45.0` | Goc quet mat na cheo (do). |
+| `mask_feather` | `double` | `0.05` | Do mem vien cat (0.005 den 0.25). |
+
+### Vi du code Python can thiep custom:
+```python
+settings = obs.obs_data_create()
+obs.obs_data_set_bool(settings, "custom_override", True)
+obs.obs_data_set_bool(settings, "enable_3d", True)
+obs.obs_data_set_double(settings, "rot_x", 45.0)       # Lat nghieng 45 do
+obs.obs_data_set_double(settings, "rot_y", 30.0)       # Nghieng truc Y 30 do
+obs.obs_data_set_string(settings, "anchor_point", "bottom")
+obs.obs_data_set_bool(settings, "enable_blur", True)
+obs.obs_data_set_double(settings, "blur_radius", 18.0)
+obs.obs_data_set_string(settings, "easing", "elastic_out")
+obs.obs_data_set_int(settings, "duration", 750)
+
+obs.obs_source_update(transition_source, settings)
+obs.obs_data_release(settings)
+```
+
+---
+
+## 4. Phuong phap 1: OBS-WebSocket v5 (Dieu khien tu xa)
 
 OBS Studio 28+ tich hop san OBS-WebSocket v5 (Cong mac dinh: `4455`).
 
@@ -139,7 +193,7 @@ main();
 
 ---
 
-## 4. Phuong phap 2: Viet Script Python trong OBS (`obspython`)
+## 5. Phuong phap 2: Viet Script Python trong OBS (`obspython`)
 
 ### A. Giao dien dieu khien co san
 1. Mo OBS Studio -> Chon menu **Tools -> Scripts**.
@@ -188,7 +242,7 @@ def kich_hoat_hien(ten_canh, ten_nguon, hien=True):
 
 ---
 
-## 5. Phuong phap 3: Viet Script Lua trong OBS (`obslua`)
+## 6. Phuong phap 3: Viet Script Lua trong OBS (`obslua`)
 
 Lua tich hop san 100% trong OBS Studio, khong can cai them Python.
 
@@ -237,7 +291,7 @@ end
 
 ---
 
-## 6. Phuong phap 4: Tich hop Stream Deck & Touch Portal
+## 7. Phuong phap 4: Tich hop Stream Deck & Touch Portal
 
 ### Cach 1: Dung Phim tat (Hotkeys)
 1. Them `scripts/motionfx_controller.lua` vao **Tools -> Scripts**.

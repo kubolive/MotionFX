@@ -8,10 +8,11 @@
 ## Table of Contents
 1. [Architecture Overview](#1-architecture-overview)
 2. [Supported Animation Presets & Parameters](#2-supported-animation-presets--parameters)
-3. [Method 1: OBS-WebSocket v5 (Remote Automation)](#3-method-1-obs-websocket-v5-remote-automation)
-4. [Method 2: OBS Python Scripting (`obspython`)](#4-method-2-obs-python-scripting-obspython)
-5. [Method 3: OBS Lua Scripting (`obslua`)](#5-method-3-obs-lua-scripting-obslua)
-6. [Method 4: Stream Deck & Touch Portal Integration](#6-method-4-stream-deck--touch-portal-integration)
+3. [Custom Transition Overrides (Manual Parameter API)](#3-custom-transition-overrides-manual-parameter-api)
+4. [Method 1: OBS-WebSocket v5 (Remote Automation)](#4-method-1-obs-websocket-v5-remote-automation)
+5. [Method 2: OBS Python Scripting (`obspython`)](#5-method-2-obs-python-scripting-obspython)
+6. [Method 3: OBS Lua Scripting (`obslua`)](#6-method-3-obs-lua-scripting-obslua)
+7. [Method 4: Stream Deck & Touch Portal Integration](#7-method-4-stream-deck--touch-portal-integration)
 
 ---
 
@@ -67,7 +68,62 @@ Use these string identifiers in WebSocket requests, Python, and Lua:
 
 ---
 
-## 3. Method 1: OBS-WebSocket v5 (Remote Automation)
+## 3. Custom Transition Overrides (Manual Parameter API)
+
+In addition to ready-made presets, MotionFX provides a **composable parameter override system**.
+When you set `"custom_override": true` in `obs_data_t` settings, MotionFX bypasses preset defaults and constructs custom animation tracks based on your exact values.
+
+### Override Keys Reference
+
+| Setting Key | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `custom_override` | `bool` | `false` | Master toggle to enable manual overrides. |
+| `duration` | `int` | `500` | Transition duration in milliseconds. |
+| `anchor_point` | `string` | `"center"` | Pivot anchor: `"center"`, `"top"`, `"bottom"`, `"left"`, `"right"`. |
+| `easing` | `string` | `"ease_out"` | Easing curve applied to all active tracks. |
+| `enable_3d` | `bool` | `false` | Enable Euler 3D perspective rotation. |
+| `rot_x` | `double` | `90.0` | Initial 3D X rotation angle in degrees (e.g. 45.0, 90.0, 180.0). |
+| `rot_y` | `double` | `0.0` | Initial 3D Y rotation angle in degrees (horizontal card flip). |
+| `enable_rotation`| `bool` | `false` | Enable 2D Z-plane spin rotation. |
+| `rot_z` | `double` | `0.0` | Initial 2D Z rotation angle in degrees (e.g. 180.0 for half spin). |
+| `enable_slide` | `bool` | `false` | Enable position displacement. |
+| `slide_x` | `double` | `0.0` | Horizontal start offset in pixels. |
+| `slide_y` | `double` | `0.0` | Vertical start offset in pixels. |
+| `slide_z` | `double` | `0.0` | 3D space depth translation. |
+| `enable_scale` | `bool` | `false` | Enable scaling/zoom. |
+| `scale_start` | `double` | `0.0` | Initial scale factor (e.g. 0.5 for 50%). |
+| `scale_end` | `double` | `1.0` | Target resting scale factor. |
+| `enable_fade` | `bool` | `false` | Enable opacity fading. |
+| `fade_start` | `double` | `0.0` | Initial opacity (0.0 = transparent, 1.0 = opaque). |
+| `fade_end` | `double` | `1.0` | Target resting opacity. |
+| `enable_blur` | `bool` | `false` | Enable Gaussian blur focus reveal. |
+| `blur_radius` | `double` | `12.0` | Initial blur radius in pixels (1.0 to 30.0). |
+| `enable_mask` | `bool` | `false` | Enable shader mask / wipe reveal. |
+| `mask_type` | `int` | `1` | `1`: Diagonal, `2`: Radial Iris, `3`: Box, `4`: Typewriter, `5`: Stagger. |
+| `mask_angle` | `double` | `45.0` | Angle in degrees for linear mask wipe. |
+| `mask_feather` | `double` | `0.05` | Edge feathering softness (0.005 to 0.25). |
+
+### Custom Override Example (Python)
+```python
+settings = obs.obs_data_create()
+obs.obs_data_set_bool(settings, "custom_override", True)
+obs.obs_data_set_bool(settings, "enable_3d", True)
+obs.obs_data_set_double(settings, "rot_x", 45.0)       # 45 deg tilt
+obs.obs_data_set_double(settings, "rot_y", 30.0)       # 30 deg card angle
+obs.obs_data_set_string(settings, "anchor_point", "bottom")
+obs.obs_data_set_bool(settings, "enable_blur", True)
+obs.obs_data_set_double(settings, "blur_radius", 18.0)
+obs.obs_data_set_string(settings, "easing", "elastic_out")
+obs.obs_data_set_int(settings, "duration", 750)
+
+# Apply directly to transition source
+obs.obs_source_update(transition_source, settings)
+obs.obs_data_release(settings)
+```
+
+---
+
+## 4. Method 1: OBS-WebSocket v5 (Remote Automation)
 
 OBS-WebSocket v5 is natively built into OBS Studio 28+.
 
@@ -142,7 +198,7 @@ run();
 
 ---
 
-## 4. Method 2: OBS Python Scripting (`obspython`)
+## 5. Method 2: OBS Python Scripting (`obspython`)
 
 ### A. Using the Built-in Controller GUI
 1. Open OBS Studio.
@@ -194,7 +250,7 @@ def trigger_animation(scene_name, item_name, show=True):
 
 ---
 
-## 5. Method 3: OBS Lua Scripting (`obslua`)
+## 6. Method 3: OBS Lua Scripting (`obslua`)
 
 Lua is built directly into all OBS Studio installations with zero setup.
 
@@ -243,7 +299,7 @@ end
 
 ---
 
-## 6. Method 4: Stream Deck & Touch Portal Integration
+## 7. Method 4: Stream Deck & Touch Portal Integration
 
 ### Option A: Via OBS Hotkeys
 1. Load `scripts/motionfx_controller.lua` into **Tools -> Scripts**.
