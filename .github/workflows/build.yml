@@ -202,7 +202,7 @@ jobs:
           body: |
             ## MotionFX: Advanced Animation & 3D Transition Engine for OBS Studio
 
-            ### 🚀 Multi-Platform Release Assets:
+            ### Multi-Platform Release Assets:
             - **Windows (x64)**:
               - `MotionFX-v1.0.0-Windows-Installer.exe` (Automatic Installer)
               - `MotionFX-v1.0.0-Windows-x64.zip` (Portable Archive)
@@ -214,8 +214,8 @@ jobs:
               - `MotionFX-v1.0.0-macOS.pkg` (macOS Native Installer)
               - `MotionFX-v1.0.0-macOS.zip` (Plug-and-play `.plugin` bundle)
 
-            ### ✨ Highlights:
-            - Native OBS Scene Item Show / Hide transition integration (`OBS_SOURCE_TYPE_TRANSITION`).
+            ### Highlights:
+            - Native OBS Scene Item Show / Hide transition integration (OBS_SOURCE_TYPE_TRANSITION).
             - 15+ built-in presets: 3D Flip X/Y/Diagonal, Perspective Tilt, Zoom Spin, Blur Focus, Glitch, Cinematic Fly-Through, Elastic Pop, etc.
             - Full bilingual support (English & Vietnamese).
           files: all-artifacts/*
