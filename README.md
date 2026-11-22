@@ -4,7 +4,6 @@
 
 [![OBS Studio](https://img.shields.io/badge/OBS%20Studio-31.1%2B-blue.svg)](https://obsproject.com/)
 [![License](https://img.shields.io/badge/License-GPLv2-green.svg)](LICENSE)
-[![Build Multi-Platform](https://github.com/kubolive/MotionFX/actions/workflows/build.yml/badge.svg)](https://github.com/kubolive/MotionFX/actions/workflows/build.yml)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-brightgreen.svg)]()
 
 **MotionFX** is a high-performance native OBS Studio plugin (`OBS_SOURCE_TYPE_TRANSITION`) that brings professional broadcast-grade motion graphics and animation transitions directly to individual **Scene Items**.
